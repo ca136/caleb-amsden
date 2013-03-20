@@ -1,0 +1,139 @@
+<html>
+    <head>
+<link href='http://fonts.googleapis.com/css?family=Antic+Didone|Raleway:400,200' rel='stylesheet' type='text/css'>
+
+        <style>
+            /* COLOR SCHEME
+                Blue/Teal #038971
+                Red/Orange #CC2A15
+                Light Blue #61ACCB
+                Yellow #E7BD33
+            */
+            body {
+                font-family: 'Antic Didone', serif;
+            }
+            a {
+                color: #038971;
+                text-decoration: none;
+            }
+
+            a:hover {
+                text-decoration: underline;
+            }
+
+            h1, h2, h3, h4, h5, h6 {
+                font-family: 'Raleway', sans-serif;
+                font-weight: 200;
+            }
+
+            h1 {
+                font-size: 64px;
+                margin-bottom: 0.2em;
+            }
+
+            .main {
+                max-width: 960px;
+                min-height: 400px;
+                margin: 0 auto;
+
+                color: #202020;
+            }
+
+            header, footer {
+                text-align: center;
+            }
+
+            footer {
+                clear: both;
+            }
+
+            header nav {
+                font-size: 18px;
+                display: inline-block;
+                margin: 10px;
+            }
+
+            .sidebar {
+                width: 300px;
+                float: right;
+            }
+
+            .about p {
+                padding: 8px;
+                background: #B8B8B8;
+            }
+
+            .articles {
+                width: 660px;
+                float: left;
+            }
+
+            .proj-container {
+                display: inline-block;
+            }
+
+            .body {}
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Caleb Amsden</h1>
+            <nav><a href="#">Notes</a></nav>
+<!-- TODO add articles page
+            <nav><a href="#">Articles</a></nav>
+-->
+            <nav><a href="#">Projects</a></nav>
+            <nav><a href="#">About</a></nav>
+            <h2>web developer and designer</h2>
+        </header>
+        <section class="main">
+
+            <section class="projects">
+                <h2>PROJECTS</h2>
+                <div class="proj-container">
+                    <img src="" width="300" height="200" />
+                    <p>Image Caption describing the project</p>
+                </div>
+                <div class="proj-container">
+                    <img src="" width="300" height="200" />
+                    <p>Image Caption describing the project</p>
+                </div>
+                <div class="proj-container">
+                    <img src="" width="300" height="200" />
+                    <p>Image Caption describing the project</p>
+                </div>
+            </section>
+
+            <section class="articles">
+                <h2>ARTICLES</h2>
+
+                <!-- EACH NEW ITEM -->
+
+{% for note in notes %}
+                <article>
+                    <h3>{{note.headline}}</h3>
+                    <p>Published 03/01/13</p>
+                    <p>{{note.body|safe}}</p>
+                </article>
+{% endfor %}
+            </section>
+
+            <section class="sidebar">
+                <div class="">
+                    <h2>SideBar</h2>
+                    <ul>
+                        <li><a href="#">What should go here?</a></li>
+                    </ul>
+                </div>
+            </section>
+
+        </section>
+
+        <footer>
+            Footer goes here
+        </footer>
+
+
+    </body>
+</html>
+
