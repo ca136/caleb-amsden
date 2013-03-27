@@ -1,10 +1,18 @@
+#from gevent import monkey; monkey.patch_all()
+
 from flask import Flask, url_for, redirect, render_template, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext import admin, login, wtf
 from flask.ext.admin.contrib import sqlamodel
 from flask.ext.admin.contrib.fileadmin import FileAdmin
 
+#from socketio import socketio_manage
+#from socketio.namespace import BaseNamespace
+#from socketio.mixins import RoomsMixin, BroadcastMixin
+
 import os.path as op
+
+
 
 # Create application
 app = Flask(__name__)
@@ -112,6 +120,11 @@ class MyView(admin.BaseView):
 def index():
     notes = Note.query.all()
     return render_template('index.html', user=login.current_user, notes=notes)
+
+@app.route('/about')
+def about():
+    return render_template('about.html', user=login.current_user)
+
 
 @app.route('/login/', methods=('GET', 'POST'))
 def login_view():
