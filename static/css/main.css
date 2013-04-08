@@ -1,0 +1,97 @@
+/* COLOR SCHEME
+    Blue/Teal #038971
+    Red/Orange #CC2A15
+    Light Blue #61ACCB
+    Yellow #E7BD33
+*/
+body {
+    font-family: 'Antic Didone', serif;
+}
+a {
+    color: #038971;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+}
+
+h1 {
+    font-size: 64px;
+    margin-bottom: 0.2em;
+}
+
+.main {
+    max-width: 960px;
+    min-height: 600px;
+    margin: 0 auto;
+
+    color: #202020;
+}
+
+header, footer {
+    text-align: center;
+}
+
+footer {
+    clear: both;
+    margin: 50px 0;
+}
+
+header nav {
+    font-size: 18px;
+    display: inline-block;
+    margin: 10px;
+}
+
+.sidebar {
+    width: 312px;
+    float: right;
+    margin-right: 4px;
+}
+
+.about p {
+    padding: 8px;
+    background: #B8B8B8;
+}
+
+.articles {
+    width: 634px;
+    float: left;
+}
+
+.proj-container {
+    display: inline-block;
+    float: left;
+    width: 312px;
+}
+
+.proj-container.left,
+.proj-container.center {
+    margin-right: 10px;
+}
+
+.full-spread {
+    width: 750px;
+    margin: 0 auto;
+}
+
+.image-spread img {
+    margin: 0 10px;
+}
+
+.list-none {
+    list-style: none;
+    padding: 0;
+}
+
+.list-none li {
+    display: inline-block;
+    margin: 0 20px 0 0;
+}
+

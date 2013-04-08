@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <link href='http://fonts.googleapis.com/css?family=Antic+Didone|Raleway:400,200' rel='stylesheet' type='text/css'>
+        <link href="/static/css/main.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <header>
+            <h1>Caleb Amsden</h1>
+            <nav><a href="/">Home</a></nav>
+            <nav><a href="/articles">Articles</a></nav>
+            <!--<nav><a href="/#projects">Projects</a></nav>-->
+            <nav><a href="/about">About</a></nav>
+        </header>
+        <section class="main">
+            <section class="articles">
+                <h2>ARTICLES</h2>
+{% for note in notes %}
+                <article>
+                    <h3><a href="{{note.get_url()}}">{{note.headline}}</a></h3>
+                    <p>{{note.pub_date.strftime('%B %d, %Y')}}</p>
+                    <p>{{note.abstract|safe}}</p>
+                </article>
+{% endfor %}
+            </section>
+
+            <section class="sidebar">
+                <div class="">
+                    <h2>RELATED</h2>
+                    <p>
+                        <a href="#">Coming Soon</a>
+                    </p>
+                </div>
+            </section>
+
+
+        </section>
+        <footer>
+            Last updated by Caleb Amsden, March 2013
+        </footer>
+
+
+
+    </body>
+</html>

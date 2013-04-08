@@ -11,8 +11,9 @@ from flask.ext.admin.contrib.fileadmin import FileAdmin
 #from socketio.mixins import RoomsMixin, BroadcastMixin
 
 import os.path as op
-
-
+import re
+from unicodedata import normalize
+from datetime import datetime
 
 # Create application
 app = Flask(__name__)
@@ -24,6 +25,16 @@ app.config['SECRET_KEY'] = '123456790'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+
+_punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.:+]+')
+def slugify(text, delim=u'-'):
+    """Generates an slightly worse ASCII-only slug."""
+    result = []
+    for word in _punct_re.split(text.lower()):
+        word = normalize('NFKD', word).encode('ascii', 'ignore')
+        if word:
+            result.append(word)
+    return unicode(delim.join(result))
 
 
 # Create user model. For simplicity, it will store passwords in plain text.
@@ -56,13 +67,26 @@ class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     headline = db.Column(db.String(64), unique=True)
     body = db.Column(db.Text)
-#    publish_date = db.relationship('Size', backref='product')
+    pub_date = db.Column(db.DateTime)
+
+    def __init__(self, headline, body, pub_date=None):
+        self.headline = headline
+        self.body = body
+        if pub_date is None:
+            pub_date = datetime.utcnow()
+        self.pub_date = pub_date
+
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     headline = db.Column(db.String(64), unique=True)
+    abstract = db.Column(db.Text)
     body = db.Column(db.Text)
-#    publish_date = db.relationship('Size', backref='product')
+    pub_date = db.Column(db.DateTime)
+
+    def get_url(self):
+        return '/article/{0}/{1}/'.format(self.id,\
+                slugify(self.headline))
 
 
 class Photo(db.Model):
@@ -86,7 +110,8 @@ class LoginForm(wtf.Form):
             raise wtf.ValidationError('Invalid password')
 
     def get_user(self):
-        return db.session.query(User).filter_by(login=self.login.data).first()
+        return db.session.query(User).filter_by(\
+                login=self.login.data).first()
 
 
 # Initialize flask-login
@@ -119,12 +144,26 @@ class MyView(admin.BaseView):
 @app.route('/')
 def index():
     notes = Note.query.all()
-    return render_template('index.html', user=login.current_user, notes=notes)
+    return render_template('index.html', user=login.current_user,\
+            notes=notes)
 
-@app.route('/about')
+@app.route('/about/')
 def about():
     return render_template('about.html', user=login.current_user)
 
+@app.route('/articles/')
+def articles():
+    notes = Note.query.all()
+    return render_template('articles.html', user=login.current_user,\
+            notes=notes)
+
+@app.route('/article/<path:article_path>/')
+def article(article_path):
+    article_id = article_path.split('/')[0]
+    note = Note.query.get(article_id)
+    related = Note.query.filter(Note.id != note.id)
+    return render_template('article.html', user=login.current_user,\
+            note=note, related=related)
 
 @app.route('/login/', methods=('GET', 'POST'))
 def login_view():
@@ -152,12 +191,10 @@ def register_view():
 
     return render_template('form.html', form=form)
 
-
 @app.route('/logout/')
 def logout_view():
     login.logout_user()
     return redirect(url_for('index'))
-
 
 if __name__ == '__main__':
     # Initialize flask-login
@@ -179,3 +216,4 @@ if __name__ == '__main__':
     # Start app
     app.debug = True
     app.run()
+
