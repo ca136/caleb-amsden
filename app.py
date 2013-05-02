@@ -176,7 +176,7 @@ def index():
 
     stats = Stats.query.all()
     return render_template('index.html', user=login.current_user,\
-            notes=notes, stats=stats)
+            notes=notes, stats=stats, SITE_URL="calebamsden.com")
 
 @app.route('/about/')
 def about():
