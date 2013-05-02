@@ -49,7 +49,11 @@
                 <div class="">
                     <h2>LIVE STATS</h2>
                     <p>
-                        <a href="#">Coming Soon</a>
+                        <ul>
+{% for stat in stats %}
+                            <li >{{stat.country}}: <span id="country{{stat.id}}">{{stat.count}}</span> pageviews</li>
+{% endfor %}
+                        </ul>
                     </p>
                 </div>
             </section>
@@ -60,6 +64,13 @@
              Designed and developed by Caleb Amsden, 2013
         </footer>
 
+    <script type=text/javascript src=http://localhost:8080/application.js></script>
+    <script type=text/javascript>
+        var jug = new Juggernaut();
+        jug.subscribe('stats', function(data) {
+            document.getElementById('country' + data.id).innerHTML = data.count
+        });
+</script>
 
     </body>
 </html>

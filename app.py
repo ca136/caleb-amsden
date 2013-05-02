@@ -10,10 +10,14 @@ from flask.ext.admin.contrib.fileadmin import FileAdmin
 #from socketio.namespace import BaseNamespace
 #from socketio.mixins import RoomsMixin, BroadcastMixin
 
+from juggernaut import Juggernaut
+
 import os.path as op
 import re
 from unicodedata import normalize
 from datetime import datetime
+
+from ip_geo import geocoder
 
 # Create application
 app = Flask(__name__)
@@ -25,6 +29,7 @@ app.config['SECRET_KEY'] = '123456790'
 app.config.from_object('config')
 
 db = SQLAlchemy(app)
+jug = Juggernaut()
 
 _punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.:+]+')
 def slugify(text, delim=u'-'):
@@ -95,6 +100,16 @@ class Photo(db.Model):
     main_photo = db.Column(db.Boolean)
 
 
+class Stats(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    country = db.Column(db.String(255), unique=True)
+    count = db.Column(db.Integer)
+
+    def __init__(self, country, count=1):
+        self.country = country
+        self.count = count
+
+
 # Define login and registration forms (for flask-login)
 class LoginForm(wtf.Form):
     login = wtf.TextField(validators=[wtf.required()])
@@ -144,8 +159,24 @@ class MyView(admin.BaseView):
 @app.route('/')
 def index():
     notes = Note.query.all()
+
+    country = geocoder(request.remote_addr)
+    country_stat = Stats.query.filter_by(country=country).first()
+
+    if country_stat:
+        country_stat.count = country_stat.count + 1
+    else:
+        country_stat = Stats(country)
+
+    db.session.add(country_stat)
+    db.session.commit()
+
+    data = {'id': country_stat.id, 'count': country_stat.count}
+    jug.publish('stats', data)
+
+    stats = Stats.query.all()
     return render_template('index.html', user=login.current_user,\
-            notes=notes)
+            notes=notes, stats=stats)
 
 @app.route('/about/')
 def about():
@@ -208,6 +239,7 @@ if __name__ == '__main__':
     admin.add_view(FileAdmin(path, '/files/', name='Files'))
     admin.add_view(sqlamodel.ModelView(User, db.session))
     admin.add_view(sqlamodel.ModelView(Note, db.session))
+    admin.add_view(sqlamodel.ModelView(Stats, db.session))
     #admin.add_view(ProductAdmin(Product, db.session))
 
     # Create DB
