@@ -49,6 +49,10 @@ header nav {
     margin: 10px;
 }
 
+.center {
+    text-align: center;
+}
+
 .sidebar {
     width: 312px;
     float: right;
